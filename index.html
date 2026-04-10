@@ -476,8 +476,22 @@
         function loadCart() {
             let cart = JSON.parse(localStorage.getItem("cart")) || [];
             let div = document.getElementById("cartItems");
+            let summary = document.querySelector(".summary");
             div.innerHTML = "";
             let total = 0;
+
+            if (cart.length === 0) {
+                div.innerHTML = `
+                    <div style="text-align: center; padding: 40px; background: white; border-radius: 10px;">
+                        <h3 style="color: #64748b; margin-top: 0;">Your cart is empty</h3>
+                        <br>
+                        <button class="btn add" style="width: auto; padding: 10px 24px; border-radius: 30px;" onclick="show('menuPage')">Browse Menu</button>
+                    </div>`;
+                if (summary) summary.style.display = "none";
+                return;
+            } else {
+                if (summary) summary.style.display = "block";
+            }
 
             cart.forEach((i, index) => {
                 total += i.price * i.qty;
@@ -575,6 +589,11 @@ ${i.name} ₹${i.price} × ${i.qty}
             let div = document.getElementById(id);
             div.innerHTML = "";
 
+            if (data.length === 0) {
+                div.innerHTML = "<div style='padding: 15px; text-align: center; color: #888; background: #fafafa; border-radius: 8px; border: 1px dashed #ddd;'>No orders yet today</div>";
+                return;
+            }
+
             data.forEach(o => {
                 let items = o.items.map(i => i.name + " x" + i.qty).join(", ");
                 div.innerHTML += `
@@ -604,7 +623,13 @@ ${label ? `<button class="btn ${color}" onclick="updateStatus('${o.id}','${next}
             let div = document.getElementById("ordersPage");
             
             if (orders.length === 0) {
-                div.innerHTML = "<h2 style='padding: 20px;'>Today's Orders</h2><p style='padding: 0 20px;'>No orders found for today.</p>";
+                div.innerHTML = `
+                    <div style="padding: 20px; max-width: 800px; margin: 0 auto; text-align: center;">
+                        <h2>Today's Orders</h2>
+                        <div style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); color: #64748b;">
+                            <h3>No orders yet. Start ordering!</h3>
+                        </div>
+                    </div>`;
                 return;
             }
 
