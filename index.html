@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkipQ - Smart Canteen</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Inter;
+            background: #F8FAFC;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 25px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            color: #E94560;
+            font-weight: 600;
+            font-size: 20px;
+        }
+
+        .nav-links span {
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        /* HERO */
+        .hero {
+            text-align: center;
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            padding: 40px 20px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            color: #1e293b;
+            margin-top: 0;
+            font-size: 32px;
+        }
+        
+        .hero p {
+            color: #64748b;
+            font-size: 16px;
+            margin-bottom: 20px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* FILTER */
+        .filters {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .filter-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            margin: 5px;
+            cursor: pointer;
+            transition: background 0.2s, filter 0.2s;
+        }
+
+        .filter-btn:hover {
+            filter: brightness(0.9);
+        }
+
+        .filter-btn.active {
+            background: #E94560;
+            color: white;
+        }
+
+        /* MENU */
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            border-radius: 8px;
+            margin-top: 5px;
+            cursor: pointer;
+            transition: filter 0.2s ease, background 0.2s ease;
+        }
+
+        .btn:hover {
+            filter: brightness(0.9);
+        }
+
+        .add {
+            background: #E94560;
+            color: white;
+        }
+
+        /* CART */
+        .container {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .cart-items {
+            flex: 2;
+        }
+
+        .summary {
+            flex: 1;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .item {
+            background: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        /* ORDERS */
+        .order {
+            background: white;
+            margin: 15px;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        /* BADGES */
+        .badge-status {
+            padding: 5px 12px;
+            border-radius: 50px;
+            color: white;
+            font-size: 14px;
+            display: inline-block;
+            text-align: center;
+        }
+        .bg-grey { background-color: #6c757d; }
+        .bg-amber { background-color: #f59e0b; color: white; }
+        .bg-green { background-color: #28a745; }
+
+        /* STAFF QUEUE */
+        .queue {
+            display: flex;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .column {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .column h3 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 🔴 COUNT BADGE */
+        .count-badge {
+            background: #E94560;
+            color: white;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 50px;
+        }
+
+        .queue-card {
+            background: #f9f9f9;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .queue-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* BUTTON COLORS */
+        .blue { background: #007bff; color: white; }
+        .green { background: #28a745; color: white; }
+
+        /* PAGE */
+        .page { display: none; }
+        .active-page { display: block; }
+        
+        /* TOAST */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translate(-50%, -150%);
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 2000;
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        .toast.show {
+            transform: translate(-50%, 0);
+        }
+
+        /* MOBILE RESPONSIVE (375px) */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            .nav-links {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+            .nav-links span { margin: 0; }
+            .hero { padding: 30px 15px; }
+            .hero h1 { font-size: 26px; }
+            .container { flex-direction: column; }
+            .stats-container { flex-direction: column; }
+            .queue { flex-direction: column; padding: 10px; }
+            .column { width: 100%; box-sizing: border-box; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <div class="navbar">
+        <div class="logo">SkipQ</div>
+        <div class="nav-links">
+            <span onclick="show('menuPage')">Menu</span>
+            <span onclick="show('cartPage')">Cart (<span id="count">0</span>)</span>
+            <span onclick="show('ordersPage')">Orders</span>
+            <span onclick="show('staffPage')">Staff</span>
+            <span onclick="logoutStaff()">Logout</span>
+        </div>
+    </div>
+
+    <!-- MENU -->
+    <div id="menuPage" class="page active-page">
+        <div class="hero">
+            <h1>Skip the Queue. Order Ahead.</h1>
+            <p>Fresh, healthy, and fast meals directly from the canteen to you.</p>
+            <button class="btn add" style="width: auto; padding: 10px 24px; font-size: 16px; border-radius: 30px;" onclick="document.getElementById('menu').scrollIntoView({behavior: 'smooth'})">Browse Menu</button>
+        </div>
+        <div class="filters">
+            <button onclick="setFilter('All',event)" class="filter-btn active">All</button>
+            <button onclick="setFilter('Meals',event)" class="filter-btn">Meals</button>
+            <button onclick="setFilter('Snacks',event)" class="filter-btn">Snacks</button>
+            <button onclick="setFilter('Drinks',event)" class="filter-btn">Drinks</button>
+        </div>
+        <div id="menu" class="menu"></div>
+    </div>
+
+    <!-- CART -->
+    <div id="cartPage" class="page">
+        <div class="container">
+            <div id="cartItems" class="cart-items"></div>
+
+            <div class="summary">
+                <h3>Summary</h3>
+                <p>Subtotal ₹<span id="subtotal">0</span></p>
+                <h2>Total ₹<span id="total">0</span></h2>
+
+                <select id="slot">
+                    <option value="">Select Time</option>
+                </select>
+
+                <br><br>
+                <button class="btn add" onclick="placeOrder()">Place Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div id="ordersPage" class="page"></div>
+
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000;">
+        <div style="background: white; padding: 30px; border-radius: 10px; text-align: center; width: 300px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+            <h2 style="margin-top: 0; color: #E94560;">Staff Login</h2>
+            <input type="password" id="staffPwd" placeholder="Password" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px; box-sizing: border-box; font-size: 16px;">
+            <button class="btn blue" onclick="loginStaff()">Login</button>
+            <button class="btn" style="background: #ccc; margin-top: 10px; color: black;" onclick="document.getElementById('loginModal').style.display='none'">Cancel</button>
+        </div>
+    </div>
+
+    <!-- STAFF -->
+    <div id="staffPage" class="page">
+        <div class="stats-container" style="display: flex; gap: 20px; padding: 20px 20px 0;">
+            <div class="stat-card" style="flex: 1; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center;">
+                <h4 style="margin: 0 0 10px; color: #555;">Total Orders Today</h4>
+                <div id="statTotalOrders" style="font-size: 24px; font-weight: bold; color: #E94560;">0</div>
+            </div>
+            <div class="stat-card" style="flex: 1; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center;">
+                <h4 style="margin: 0 0 10px; color: #555;">Total Revenue (Today)</h4>
+                <div id="statTotalRevenue" style="font-size: 24px; font-weight: bold; color: #28a745;">₹0</div>
+            </div>
+            <div class="stat-card" style="flex: 1; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center;">
+                <h4 style="margin: 0 0 10px; color: #555;">Most Ordered (All-time)</h4>
+                <div id="statMostOrdered" style="font-size: 18px; font-weight: bold; color: #007bff; margin-top: 5px;">-</div>
+            </div>
+        </div>
+        <div class="queue">
+
+            <div class="column">
+                <h3>Pending <span class="count-badge" id="pendingCount">0</span></h3>
+                <div id="pendingList"></div>
+            </div>
+
+            <div class="column">
+                <h3>Preparing <span class="count-badge" id="preparingCount">0</span></h3>
+                <div id="preparingList"></div>
+            </div>
+
+            <div class="column">
+                <h3>Ready <span class="count-badge" id="readyCount">0</span></h3>
+                <div id="readyList"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const menuData = [
+            { id: 1, name: "Veg Burger", category: "Snacks", price: 60, img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd" },
+            { id: 2, name: "Masala Dosa", category: "Meals", price: 80, img: "https://images.unsplash.com/photo-1668236543090-82eba5ee5976" },
+            { id: 3, name: "Cold Coffee", category: "Drinks", price: 50, img: "https://images.unsplash.com/photo-1509042239860-f550ce710b93" },
+            { id: 4, name: "Samosa", category: "Snacks", price: 20, img: "https://images.unsplash.com/photo-1601050690597-df0568f70950" },
+            { id: 5, name: "Veg Thali", category: "Meals", price: 120, img: "https://images.unsplash.com/photo-1613292443284-8d10ef9383fe" },
+            { id: 6, name: "Tea", category: "Drinks", price: 15, img: "https://images.unsplash.com/photo-1511920170033-f8396924c348" },
+            { id: 7, name: "French Fries", category: "Snacks", price: 70, img: "https://images.unsplash.com/photo-1541592106381-b31e9677c0e5" },
+            { id: 8, name: "Paneer Rice", category: "Meals", price: 100, img: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7" }
+        ];
+
+        let current = "All";
+
+        function showToast(msg) {
+            let t = document.getElementById("toast");
+            t.innerText = msg;
+            t.classList.add("show");
+            setTimeout(() => t.classList.remove("show"), 3000);
+        }
+
+        /* NAV */
+        function show(id) {
+            // Staff Login Gate
+            if (id === "staffPage") {
+                if (localStorage.getItem("staffLoggedIn") !== "true") {
+                    document.getElementById("loginModal").style.display = "flex";
+                    return; // Halt navigation
+                }
+            }
+
+            document.querySelectorAll(".page").forEach(p => p.classList.remove("active-page"));
+            document.getElementById(id).classList.add("active-page");
+
+            if (id === "cartPage") loadCart();
+            if (id === "ordersPage") loadOrders();
+            if (id === "staffPage") loadQueue();
+        }
+
+        /* STAFF LOGIN */
+        function loginStaff() {
+            let pwd = document.getElementById("staffPwd").value;
+            if (pwd === "canteen123") {
+                localStorage.setItem("staffLoggedIn", "true");
+                document.getElementById("loginModal").style.display = "none";
+                document.getElementById("staffPwd").value = "";
+                show("staffPage");
+                showToast("Logged in as Staff");
+            } else {
+                showToast("Incorrect Password!");
+            }
+        }
+
+        function logoutStaff() {
+            localStorage.removeItem("staffLoggedIn");
+            showToast("Staff logged out.");
+            show("menuPage");
+        }
+
+        /* MENU */
+        function load() {
+            let container = document.getElementById("menu");
+            container.innerHTML = "";
+            (menuData.filter(i => current === "All" || i.category === current))
+                .forEach(item => {
+                    container.innerHTML += `
+<div class="card">
+<img src="${item.img}">
+<div class="card-body">
+<h3>${item.name}</h3>
+<div>${item.category}</div>
+<div>₹${item.price}</div>
+<button class="btn add" onclick="add(${item.id})">Add</button>
+</div>
+</div>`;
+                });
+        }
+
+        function setFilter(cat, e) {
+            current = cat;
+            document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+            e.target.classList.add("active");
+            load();
+        }
+
+        /* CART */
+        function add(id) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            let item = cart.find(i => i.id === id);
+            if (item) item.qty++;
+            else cart.push({ ...menuData.find(i => i.id === id), qty: 1 });
+            localStorage.setItem("cart", JSON.stringify(cart));
+            update();
+        }
+
+        function loadCart() {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            let div = document.getElementById("cartItems");
+            div.innerHTML = "";
+            let total = 0;
+
+            cart.forEach((i, index) => {
+                total += i.price * i.qty;
+                div.innerHTML += `
+<div class="item">
+${i.name} ₹${i.price} × ${i.qty}
+<br>
+<button onclick="qty(${index},-1)">-</button>
+<button onclick="qty(${index},1)">+</button>
+</div>`;
+            });
+
+            document.getElementById("subtotal").innerText = total;
+            document.getElementById("total").innerText = total;
+        }
+
+        function qty(i, val) {
+            let cart = JSON.parse(localStorage.getItem("cart"));
+            cart[i].qty += val;
+            if (cart[i].qty <= 0) cart.splice(i, 1);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            loadCart(); update();
+        }
+
+        /* ORDER */
+        function placeOrder() {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            let slot = document.getElementById("slot").value;
+
+            if (!cart.length) return showToast("Cart empty");
+            if (!slot) return showToast("Select pickup time");
+
+            let order = {
+                id: "ORD" + Date.now(),
+                items: cart,
+                pickupSlot: slot,
+                status: "Pending",
+                placedAt: new Date().toISOString(),
+                total: cart.reduce((t, i) => t + i.price * i.qty, 0)
+            };
+
+            let orders = JSON.parse(localStorage.getItem("orders")) || [];
+            orders.push(order);
+            localStorage.setItem("orders", JSON.stringify(orders));
+            localStorage.removeItem("cart");
+
+            showToast("Order placed!");
+            update();
+        }
+
+        /* QUEUE */
+        function loadQueue() {
+            let allOrders = JSON.parse(localStorage.getItem("orders")) || [];
+            let todayStr = new Date().toDateString();
+            let orders = allOrders.filter(o => o.placedAt && new Date(o.placedAt).toDateString() === todayStr);
+
+            // Calculate Stats
+            document.getElementById("statTotalOrders").innerText = orders.length;
+            
+            let revenue = orders.reduce((sum, o) => sum + o.total, 0);
+            document.getElementById("statTotalRevenue").innerText = "₹" + revenue;
+
+            let itemCounts = {};
+            allOrders.forEach(o => {
+                if (o.items) {
+                    o.items.forEach(i => {
+                        itemCounts[i.name] = (itemCounts[i.name] || 0) + i.qty;
+                    });
+                }
+            });
+            let maxItem = "-";
+            let maxCount = 0;
+            for (let name in itemCounts) {
+                if (itemCounts[name] > maxCount) {
+                    maxCount = itemCounts[name];
+                    maxItem = name;
+                }
+            }
+            document.getElementById("statMostOrdered").innerText = maxItem !== "-" ? `${maxItem} (${maxCount})` : "-";
+
+            let pending = orders.filter(o => o.status === "Pending");
+            let preparing = orders.filter(o => o.status === "Preparing");
+            let ready = orders.filter(o => o.status === "Ready");
+
+            render("pendingList", pending, "Preparing", "Start Preparing", "blue");
+            render("preparingList", preparing, "Ready", "Mark as Ready", "green");
+            render("readyList", ready);
+
+            document.getElementById("pendingCount").innerText = pending.length;
+            document.getElementById("preparingCount").innerText = preparing.length;
+            document.getElementById("readyCount").innerText = ready.length;
+        }
+
+        function render(id, data, next, label, color) {
+            let div = document.getElementById(id);
+            div.innerHTML = "";
+
+            data.forEach(o => {
+                let items = o.items.map(i => i.name + " x" + i.qty).join(", ");
+                div.innerHTML += `
+<div class="queue-card">
+<b>${o.id}</b><br>
+${items}<br>
+₹${o.total}<br>
+${o.pickupSlot}<br>
+${new Date(o.placedAt).toLocaleTimeString()}<br>
+${label ? `<button class="btn ${color}" onclick="updateStatus('${o.id}','${next}')">${label}</button>` : "✔ Ready"}
+</div>`;
+            });
+        }
+
+        function updateStatus(id, status) {
+            let orders = JSON.parse(localStorage.getItem("orders"));
+            orders.find(o => o.id === id).status = status;
+            localStorage.setItem("orders", JSON.stringify(orders));
+            loadQueue();
+        }
+
+        /* ORDERS PAGE */
+        function loadOrders() {
+            let allOrders = JSON.parse(localStorage.getItem("orders")) || [];
+            let todayStr = new Date().toDateString();
+            let orders = allOrders.filter(o => o.placedAt && new Date(o.placedAt).toDateString() === todayStr);
+            let div = document.getElementById("ordersPage");
+            
+            if (orders.length === 0) {
+                div.innerHTML = "<h2 style='padding: 20px;'>Today's Orders</h2><p style='padding: 0 20px;'>No orders found for today.</p>";
+                return;
+            }
+
+            let tableHTML = `
+            <div style="padding: 20px;">
+                <h2>Today's Orders</h2>
+                <div class="table-responsive">
+                <table style="width: 100%; min-width: 500px; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);">
+                    <thead>
+                        <tr style="background-color: #F8FAFC; border-bottom: 2px solid #ddd; text-align: left;">
+                            <th style="padding: 12px 15px;">ID</th>
+                            <th style="padding: 12px 15px;">Items</th>
+                            <th style="padding: 12px 15px;">Total</th>
+                            <th style="padding: 12px 15px;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            orders.reverse().forEach(o => {
+                let itemsList = o.items.map(i => `${i.name} x${i.qty}`).join(", ");
+                let statusClass = o.status === "Ready" ? "bg-green" : (o.status === "Preparing" ? "bg-amber" : "bg-grey");
+                
+                tableHTML += `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 12px 15px;"><strong>${o.id}</strong></td>
+                    <td style="padding: 12px 15px;">${itemsList}</td>
+                    <td style="padding: 12px 15px;">₹${o.total}</td>
+                    <td style="padding: 12px 15px;"><span class="badge-status ${statusClass}">${o.status}</span></td>
+                </tr>`;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+                </div>
+            </div>`;
+            
+            div.innerHTML = tableHTML;
+        }
+
+        /* COUNT */
+        function update() {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            document.getElementById("count").innerText = cart.reduce((a, b) => a + b.qty, 0);
+        }
+
+        /* INIT */
+        load();
+        update();
+
+        /* TIME SLOT */
+        let s = document.getElementById("slot");
+        let t = new Date(); t.setHours(12, 0);
+        while (t.getHours() < 14) {
+            let opt = document.createElement("option");
+            opt.value = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            opt.text = opt.value;
+            s.appendChild(opt);
+            t.setMinutes(t.getMinutes() + 15);
+        }
+    </script>
+
+</body>
+
+</html>
